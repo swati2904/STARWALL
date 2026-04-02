@@ -29,15 +29,15 @@ public class Stage1ObjectiveUI : MonoBehaviour
 
         if (stage1State.StageCompleted)
         {
-            desiredText = "Objective: Stage complete";
+            desiredText = $"Objective: Stage complete\nOptional: Scrap caches {stage1State.ScrapCachesCollected}/{stage1State.ScrapCacheTarget}";
         }
         else if (stage1State.BeaconActivated)
         {
-            desiredText = "Objective: Proceed to extraction";
+            desiredText = $"Objective: Proceed to extraction\nOptional: Scrap caches {stage1State.ScrapCachesCollected}/{stage1State.ScrapCacheTarget}";
         }
         else
         {
-            desiredText = "Objective: Activate the beacon";
+            desiredText = $"Objective: Activate the beacon\nOptional: Scrap caches {stage1State.ScrapCachesCollected}/{stage1State.ScrapCacheTarget}";
         }
 
         if (!force && desiredText == _currentText)

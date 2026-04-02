@@ -10,6 +10,8 @@ public class PlayerInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     [SerializeField] private float interactRange = 2f;
+    [Tooltip("How much vertical distance above/below the player is still interactable.")]
+    [SerializeField] private float verticalInteractAllowance = 1.5f;
     [SerializeField] private LayerMask interactLayerMask;
 
     // Called by Input System "Interact" action
@@ -23,8 +25,10 @@ public class PlayerInteraction : MonoBehaviour
 
     private void TryInteract()
     {
-        // Find nearby interactables in a small radius for beginner-friendly interaction.
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactRange, interactLayerMask);
+        // Find nearby interactables in a box so jumping doesn't break interaction.
+        // We measure "range" in XZ, but allow extra Y tolerance.
+        Vector3 halfExtents = new Vector3(interactRange, verticalInteractAllowance, interactRange);
+        Collider[] hits = Physics.OverlapBox(transform.position, halfExtents, Quaternion.identity, interactLayerMask);
         if (hits.Length == 0)
         {
             Debug.Log("No interactable in range.");
@@ -36,7 +40,9 @@ public class PlayerInteraction : MonoBehaviour
 
         for (int i = 0; i < hits.Length; i++)
         {
-            float sqrDistance = (hits[i].transform.position - transform.position).sqrMagnitude;
+            Vector3 diff = hits[i].transform.position - transform.position;
+            diff.y = 0f; // choose nearest by horizontal distance only
+            float sqrDistance = diff.sqrMagnitude;
             if (sqrDistance < closestSqrDistance)
             {
                 closestSqrDistance = sqrDistance;
